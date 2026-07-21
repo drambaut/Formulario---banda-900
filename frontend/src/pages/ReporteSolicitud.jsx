@@ -35,7 +35,7 @@ export default function ReporteSolicitud() {
   return (
     <div>
       <header className="encabezado">
-        <h1>ANE — Reporte de solicitud #{reporte.id}</h1>
+        <h1>ANE — Reporte de solicitud</h1>
       </header>
       <div className="contenedor">
         <div className="no-imprimir" style={{ marginBottom: 16 }}>
@@ -120,8 +120,8 @@ export default function ReporteSolicitud() {
                 <table>
                   <thead>
                     <tr>
-                      <th>Acimut</th>
-                      <th>Tilt</th>
+                      <th>ACIMUT</th>
+                      <th>TILT</th>
                       <th>Ganancia</th>
                       <th>Ángulo de apertura</th>
                       <th>Altura al suelo</th>
