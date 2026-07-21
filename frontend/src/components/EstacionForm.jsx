@@ -1,5 +1,7 @@
+import CoordenadasInput from './CoordenadasInput.jsx'
 import MapaUbicacion from './MapaUbicacion.jsx'
 import SectoresEditor from './SectoresEditor.jsx'
+import UbicacionSelect from './UbicacionSelect.jsx'
 
 export default function EstacionForm({
   estacion,
@@ -11,40 +13,18 @@ export default function EstacionForm({
     onChange({ ...estacion, [campo]: valor })
   }
 
+  function actualizarCoordenadas(patch) {
+    onChange({ ...estacion, ...patch })
+  }
+
   return (
     <div>
-      <div className="fila">
-        <div className="campo">
-          <label>Latitud</label>
-          <input
-            type="number"
-            step="any"
-            value={estacion.latitud}
-            onChange={(e) => set('latitud', e.target.value)}
-            required
-          />
-        </div>
-        <div className="campo">
-          <label>Longitud</label>
-          <input
-            type="number"
-            step="any"
-            value={estacion.longitud}
-            onChange={(e) => set('longitud', e.target.value)}
-            required
-          />
-        </div>
-        <div className="campo">
-          <label>Formato de coordenadas</label>
-          <select
-            value={estacion.formato_coordenadas}
-            onChange={(e) => set('formato_coordenadas', e.target.value)}
-          >
-            <option value="decimal">Decimal</option>
-            <option value="gms">Grados, minutos, segundos (GMS)</option>
-          </select>
-        </div>
-      </div>
+      <CoordenadasInput
+        latitud={estacion.latitud}
+        longitud={estacion.longitud}
+        formatoCoordenadas={estacion.formato_coordenadas}
+        onChange={actualizarCoordenadas}
+      />
 
       <MapaUbicacion latitud={estacion.latitud} longitud={estacion.longitud} />
 
@@ -56,20 +36,11 @@ export default function EstacionForm({
             onChange={(e) => set('direccion_estacion', e.target.value)}
           />
         </div>
-        <div className="campo">
-          <label>Departamento</label>
-          <input
-            value={estacion.departamento}
-            onChange={(e) => set('departamento', e.target.value)}
-          />
-        </div>
-        <div className="campo">
-          <label>Municipio</label>
-          <input
-            value={estacion.municipio}
-            onChange={(e) => set('municipio', e.target.value)}
-          />
-        </div>
+        <UbicacionSelect
+          departamento={estacion.departamento}
+          municipio={estacion.municipio}
+          onChange={(patch) => onChange({ ...estacion, ...patch })}
+        />
       </div>
 
       {mostrarTipoEstacion && (

@@ -201,3 +201,13 @@ td {
   text-align: center;
   margin-top: 20px;
 }
+
+@media print {
+  .no-imprimir {
+    display: none;
+  }
+  .encabezado {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

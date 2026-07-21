@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import CampoTelefono from '../components/CampoTelefono.jsx'
 import EstacionForm from '../components/EstacionForm.jsx'
 import { crearSolicitud, obtenerCamposAntena } from '../api.js'
 import { estacionVacia, prepararEstacionParaEnvio } from '../utils.js'
@@ -7,11 +8,13 @@ const SOLICITUD_VACIA = {
   razon_social: '',
   nit: '',
   representante_legal: '',
-  telefono: '',
+  telefono: '+57',
   direccion: '',
   correo_electronico: '',
   radicado_mintic: '',
 }
+
+const REGEX_CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export default function FormularioComunidad() {
   const [camposAntena, setCamposAntena] = useState(null)
@@ -29,6 +32,19 @@ export default function FormularioComunidad() {
     setSolicitud((s) => ({ ...s, [campo]: valor }))
   }
 
+  function manejarCambioNit(e) {
+    // Solo digitos, sin signo ni flechas de incremento (por eso es type="text").
+    const soloDigitos = e.target.value.replace(/\D/g, '').slice(0, 15)
+    setCampoSolicitud('nit', soloDigitos)
+  }
+
+  function manejarCambioCorreo(e) {
+    setCampoSolicitud('correo_electronico', e.target.value)
+  }
+
+  const correoValido =
+    solicitud.correo_electronico === '' || REGEX_CORREO.test(solicitud.correo_electronico)
+
   function actualizarEstacion(idx, nuevaEstacion) {
     setEstaciones((prev) => prev.map((e, i) => (i === idx ? nuevaEstacion : e)))
   }
@@ -44,6 +60,16 @@ export default function FormularioComunidad() {
   async function manejarEnvio(e) {
     e.preventDefault()
     setError(null)
+
+    if (!REGEX_CORREO.test(solicitud.correo_electronico)) {
+      setError('El correo electrónico no tiene un formato válido (ej: nombre@dominio.com)')
+      return
+    }
+    if (solicitud.telefono.replace('+57', '').length < 7) {
+      setError('El teléfono debe tener entre 7 y 10 dígitos')
+      return
+    }
+
     setEnviando(true)
     try {
       const payload = {
@@ -70,7 +96,7 @@ export default function FormularioComunidad() {
           <div className="mensaje-ok">
             Solicitud #{confirmacion.id} enviada correctamente. Estado: {confirmacion.estado}.
           </div>
-          <button onClick={() => window.open(`/api/solicitudes/${confirmacion.id}/reporte`, '_blank')}>
+          <button onClick={() => window.open(`/solicitud/${confirmacion.id}/reporte`, '_blank')}>
             Ver reporte de la solicitud
           </button>
         </div>
@@ -90,7 +116,7 @@ export default function FormularioComunidad() {
         {camposAntena && (
           <form onSubmit={manejarEnvio}>
             <div className="tarjeta">
-              <h2>Datos de la comunidad</h2>
+              <h2>Información de contacto</h2>
               <div className="fila">
                 <div className="campo">
                   <label>Comunidad (Razón social)</label>
@@ -103,9 +129,12 @@ export default function FormularioComunidad() {
                 <div className="campo">
                   <label>NIT</label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     value={solicitud.nit}
-                    onChange={(e) => setCampoSolicitud('nit', e.target.value)}
+                    onChange={manejarCambioNit}
+                    placeholder="Solo números"
                     required
                   />
                 </div>
@@ -119,15 +148,10 @@ export default function FormularioComunidad() {
                     required
                   />
                 </div>
-                <div className="campo">
-                  <label>Teléfono</label>
-                  <input
-                    placeholder="+57..."
-                    value={solicitud.telefono}
-                    onChange={(e) => setCampoSolicitud('telefono', e.target.value)}
-                    required
-                  />
-                </div>
+                <CampoTelefono
+                  valor={solicitud.telefono}
+                  onChange={(v) => setCampoSolicitud('telefono', v)}
+                />
               </div>
               <div className="campo">
                 <label>Dirección</label>
@@ -144,9 +168,14 @@ export default function FormularioComunidad() {
                   <input
                     type="email"
                     value={solicitud.correo_electronico}
-                    onChange={(e) => setCampoSolicitud('correo_electronico', e.target.value)}
+                    onChange={manejarCambioCorreo}
                     required
                   />
+                  {!correoValido && (
+                    <div className="error-texto">
+                      Formato inválido, debe ser como nombre@dominio.com
+                    </div>
+                  )}
                 </div>
                 <div className="campo">
                   <label>Radicado de solicitud MinTIC</label>

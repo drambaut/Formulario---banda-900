@@ -41,11 +41,11 @@ export default function CampoAntena({ nombreCampo, config, valor, onChange }) {
 export function validar(config, valorStr) {
   if (valorStr === '' || valorStr === null || valorStr === undefined) return null
   const valor = Number(valorStr)
-  if (Number.isNaN(valor)) return 'Debe ser un numero'
+  if (Number.isNaN(valor)) return 'Debe ser un número'
   const okMin = config.min_inclusive ? valor >= config.min : valor > config.min
   const okMax = config.max_inclusive ? valor <= config.max : valor < config.max
   if (okMin && okMax) return null
-  const simboloMin = config.min_inclusive ? '>=' : '>'
-  const simboloMax = config.max_inclusive ? '<=' : '<'
-  return `Debe ser ${simboloMin} ${config.min} y ${simboloMax} ${config.max}`
+  // Mensaje simple, sin lenguaje matematico ("mayor o igual", etc.), igual
+  // al que devuelve el backend.
+  return `Valor entre ${config.min} y ${config.max}`
 }

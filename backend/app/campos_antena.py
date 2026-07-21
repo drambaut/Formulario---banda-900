@@ -16,7 +16,7 @@ CAMPOS_ANTENA = {
         "max_inclusive": True,
         "tooltip": (
             "Es la direccion hacia donde apunta la antena, medida en grados desde "
-            "el norte geografico, (ingrese un valor entre 0 y 359)."
+            "el norte geografico. Valor entre 0 y 359."
         ),
     },
     "tilt": {
@@ -29,7 +29,8 @@ CAMPOS_ANTENA = {
             "Es el angulo de inclinacion en grados de la antena hacia arriba o "
             "hacia abajo, un valor positivo indica inclinacion hacia arriba, "
             "mientras que un valor negativo indica inclinacion hacia abajo, el "
-            "valor 0 indica que la antena no se encuentra inclinada."
+            "valor 0 indica que la antena no se encuentra inclinada. Valor entre "
+            "-40 y 10."
         ),
     },
     "ganancia": {
@@ -41,7 +42,8 @@ CAMPOS_ANTENA = {
         "tooltip": (
             "Indica la capacidad de la antena para concentrar la senal en una "
             "direccion determinada, se mide en dBi, el valor de la ganancia se "
-            "encuentra en la hoja de especificaciones de la antena."
+            "encuentra en la hoja de especificaciones de la antena. Valor entre "
+            "0 y 30."
         ),
     },
     "angulo_apertura": {
@@ -53,7 +55,7 @@ CAMPOS_ANTENA = {
         "tooltip": (
             "Es el angulo en grados en el que la antena radia la mayor parte de "
             "la potencia, este parametro puede ser consultado en la hoja de "
-            "especificaciones tecnicas de la antena."
+            "especificaciones tecnicas de la antena. Valor entre 0 y 360."
         ),
     },
     "altura_suelo": {
@@ -64,7 +66,7 @@ CAMPOS_ANTENA = {
         "max_inclusive": True,
         "tooltip": (
             "Es la distancia vertical en metros desde el suelo hasta la posicion "
-            "donde se instalara la antena."
+            "donde se instalara la antena. Valor entre 1 y 20."
         ),
     },
 }
@@ -77,6 +79,6 @@ def validar_campo(nombre: str, valor: float) -> str | None:
     ok_max = valor <= c["max"] if c["max_inclusive"] else valor < c["max"]
     if ok_min and ok_max:
         return None
-    simbolo_min = ">=" if c["min_inclusive"] else ">"
-    simbolo_max = "<=" if c["max_inclusive"] else "<"
-    return f"{c['label']} debe ser {simbolo_min} {c['min']} y {simbolo_max} {c['max']}"
+    # Mensaje simple e igual al que ve el usuario en el frontend, sin
+    # lenguaje matematico ("mayor o igual", etc.)
+    return f"{c['label']}: valor entre {c['min']} y {c['max']}"

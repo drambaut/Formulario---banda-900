@@ -74,9 +74,13 @@ class EstacionIn(BaseModel):
 
 class SolicitudIn(BaseModel):
     razon_social: str
-    nit: str
+    # Solo digitos, sin signo. Se valida como texto para no perder ceros a la
+    # izquierda ni tratarlo como una cantidad aritmetica.
+    nit: str = Field(pattern=r"^\d{5,15}$")
     representante_legal: str
-    telefono: str = Field(pattern=r"^\+?\d{7,10}$")
+    # El frontend envia "+57" + hasta 10 digitos (el prefijo no es editable
+    # por el usuario, ver componente CampoTelefono).
+    telefono: str = Field(pattern=r"^\+57\d{7,10}$")
     direccion: str = Field(max_length=43)
     correo_electronico: EmailStr
     radicado_mintic: Optional[str] = None
